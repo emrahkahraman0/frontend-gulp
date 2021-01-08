@@ -1,0 +1,25 @@
+//Bu Sass Dosyası Emrah KAHRAMAN tarafından kodlanmıştır.
+
+@import "_grid";
+@import "_variable";
+@import "_mixins";
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: $base-color;
+    width: 100%;
+    min-height: 100vh;
+    font-size: $size;
+    font-family: $family;
+    color: $primary-color;
+}
+
+p {
+    background-color: $secondary-color;
+    color: $base-color;
+    font-size: 30px;
+    padding: 50px;
+}
