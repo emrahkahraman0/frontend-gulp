@@ -48,4 +48,3 @@ exports.default = series(
     browsersyncServe,
     watchTask
 );
-
