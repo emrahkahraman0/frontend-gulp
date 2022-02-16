@@ -1,50 +1,40 @@
-const { src, dest, watch, series } = require('gulp');
-const sass = require('gulp-sass');
-const postcss = require('gulp-postcss');
-const cssnano = require('cssnano');
-const terser = require('gulp-terser');
-const browsersync = require('browser-sync').create();
+var gulp = require('gulp');
+var sass = require('gulp-sass')(require('sass'));
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var cleanCss = require('gulp-clean-css');
+var browserSync = require('browser-sync').create();
 
-// Sass Task
-function scssTask(){
-    return src('app/sass/style.scss', { sourcemaps: false })
-        .pipe(sass())
-        .pipe(postcss([cssnano()]))
-        .pipe(dest('dist/css/', { sourcemaps: '.' }));
-}
+//Gulp-Sass
+gulp.task('sass', function() {
+    return gulp.src("app/sass/*.scss").
+    pipe(sass({
+        includePaths: ['node_modules']
+    })).
+    pipe(concat('style.min.css/')).
+    pipe(cleanCss()).
+    pipe(gulp.dest("dist/css")).
+    pipe(browserSync.stream());
+});
 
-// JavaScript Task
-function jsTask(){
-    return src('app/js/style.js', { sourcemaps: false })
-      .pipe(terser())
-      .pipe(dest('dist/js/', { sourcemaps: '.' }));
-}
+//Gulp-Js
+gulp.task('js', function() {
+    return gulp.src('app/script/*.js').
+    pipe(concat('style.min.js')).
+    pipe(uglify()).
+    pipe(gulp.dest('dist/js/')).
+    pipe(browserSync.stream());
+});
 
-// Browser-Sync
-function browsersyncServe(cb){
-    browsersync.init({
-      server: {
-        baseDir: '.'
-      }    
+//BrowserSync
+gulp.task('serve', function() {
+    browserSync.init({
+        server: "./"
     });
-    cb();
-}
 
-function browsersyncReload(cb){
-    browsersync.reload();
-    cb();
-}
+    gulp.watch("app/sass/*.scss", gulp.series('sass'));
+    gulp.watch("app/script/*.js", gulp.series('js'));
+    gulp.watch("./*.html").on('change', browserSync.reload);
+});
 
-// Watch Task
-function watchTask(){
-    watch('*.html', browsersyncReload);
-    watch(['app/sass/**/*.scss', 'app/js/**/*.js'], series(scssTask, jsTask, browsersyncReload));
-}
-
-// Default Gulp Task
-exports.default = series(
-    scssTask,
-    jsTask,
-    browsersyncServe,
-    watchTask
-);
+gulp.task('default', gulp.series('sass', 'js', 'serve'));
