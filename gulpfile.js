@@ -38,8 +38,8 @@ gulp.task('server', function() {
 });
 
 gulp.task('watch', () => {
-    gulp.watch("dist/sass/**/*.scss", gulp.task('sass'));
-    gulp.watch("dist/script/**/*.js", gulp.task('js'));
+    gulp.watch("app/sass/**/*.scss", gulp.task('sass'));
+    gulp.watch("app/script/**/*.js", gulp.task('js'));
 });
 
 gulp.task('default', gulp.series('sass', 'js', 'server', 'watch'));
